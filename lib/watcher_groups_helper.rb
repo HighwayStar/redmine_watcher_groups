@@ -32,8 +32,7 @@ module WatcherGroupsHelper
                :object_id => object.id,
                :group_id => group}
         s << ' '
-        s << link_to(image_tag('delete.png'), url,
-                     :remote => true, :method => 'post', :style => "vertical-align: middle", :class => "delete")
+        s << link_to('', url, :remote => true, :method => 'post', :class => "icon-only icon-del delete")
       end
       content << content_tag('li', s)
     end
