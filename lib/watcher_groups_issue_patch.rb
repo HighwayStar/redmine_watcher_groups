@@ -14,23 +14,38 @@ module WatcherGroupsIssuePatch
       joins(:watchers).where("#{Watcher.table_name}.user_id IN (#{user.id} #{g.empty? ? "" : ","} #{g.map(&:id).join(',')})")
     }
 
+    # has_many :watcher_groups, :through => :watchers, :source => :user, :validate => false, class_name: 'Group'
+    safe_attributes(
+      'watcher_group_ids',
+      :if => lambda {|issue, user| issue.new_record? && user.allowed_to?(:add_issue_watchers, issue.project)})
+
     def watcher_groups
-      if self.id
+      if self.new_record?
+        Group.where(id: self.watcher_group_ids)
+      else
         groups = Watcher.where("watchable_type='#{self.class}' and watchable_id = #{self.id}")
         Group.where(id: groups.map(&:user_id))
       end
     end
 
-    def watcher_groups_ids
-      self.watcher_groups.collect {|group| group.id}
+    def watcher_group_ids
+      if self.new_record?
+        return @tmp_watcher_group_ids
+      else
+        self.watcher_groups.collect {|group| group.id}
+      end
     end
 
-    def watcher_groups_ids=(group_ids)
-      groups = group_ids.collect {|group_id| Group.find(group_id) if Group.find(group_id).is_a?(Group)  }
-			user_ids = groups.map(&:users).flatten.compact.uniq.map(&:id)
-      Watcher.where("watchable_type = '#{self.class}' AND watchable_id = #{self.id} AND user_id IN (#{user_ids.join(',')})").delete_all unless user_ids.empty?
-      groups.each do |group|
-        self.add_watcher_group(group)
+    def watcher_group_ids=(group_ids)
+      # groups = group_ids.collect {|group_id| Group.find(group_id) if Group.find(group_id).is_a?(Group)  }
+      @tmp_watcher_group_ids = group_ids
+      groups = Group.where(id: group_ids)
+      unless self.new_record?
+  			user_ids = groups.map(&:users).flatten.compact.uniq.map(&:id)
+        Watcher.where("watchable_type = '#{self.class}' AND watchable_id = #{self.id} AND user_id IN (#{user_ids.join(',')})").delete_all unless user_ids.empty?
+        groups.each do |group|
+          self.add_watcher_group(group)
+        end
       end
     end
 

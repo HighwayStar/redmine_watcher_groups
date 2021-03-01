@@ -43,20 +43,18 @@ class WatcherGroupsController < ApplicationController
   end
 
   def destroy
-    if request.post?
-      if params[:object_type] == 'issue'
-        group = Group.find(params[:group_id])
-        @watched.set_watcher_group(group, false) 
-        issue = Issue.find(params[:object_id])
-        group_users = group.users
-        if group_users.any?
-          if Redmine::Plugin.installed? :redmine_advanced_issue_history
-            notes = []
-            group_users.each do |user|
-              notes.append("Watcher #{user.name} was removed")
-            end
-            add_system_journal(notes, issue)
+    if params[:object_type] == 'issue'
+      group = Group.find(params[:group_id])
+      @watched.set_watcher_group(group, false) 
+      issue = Issue.find(params[:object_id])
+      group_users = group.users
+      if group_users.any?
+        if Redmine::Plugin.installed? :redmine_advanced_issue_history
+          notes = []
+          group_users.each do |user|
+            notes.append("Watcher #{user.name} was removed")
           end
+          add_system_journal(notes, issue)
         end
       end
     end

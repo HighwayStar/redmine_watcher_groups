@@ -1,7 +1,8 @@
 module WatcherGroups
   class ViewsIssuesHook < Redmine::Hook::ViewListener     
     include IssuesHelper
-    
+    render_on :view_issues_new_top, :partial => 'watcher_groups/new_issue_hook.erb'
+
     def view_issues_sidebar_queries_bottom(context={ })
       if (context[:controller].action_name == 'show') and
          (!context[:request].parameters[:id].blank?)

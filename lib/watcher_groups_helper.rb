@@ -17,6 +17,14 @@ module WatcherGroupsHelper
     end
   end
 
+  def groups_for_new_issue_watchers(issue)
+    users = issue.watcher_groups.select{|u| u.status == User::STATUS_ACTIVE}
+    if issue.project.users.count <= 20
+      users = (users + issue.project.users.sort).uniq
+    end
+    users
+  end
+
   # Returns a comma separated list of users watching the given object
   def watcher_groups_list(object)
     remove_allowed = User.current.allowed_to?("delete_#{object.class.name.underscore}_watchers".to_sym, object.project)
@@ -31,8 +39,11 @@ module WatcherGroupsHelper
                :object_type => object.class.to_s.underscore,
                :object_id => object.id,
                :group_id => group}
-        s << ' '
-        s << link_to('', url, :remote => true, :method => 'post', :class => "icon-only icon-del delete")
+        s << ' '  
+        s << link_to(l(:button_delete), url,
+          :remote => true, :method => 'delete',
+          :class => "delete icon-only icon-del",
+          :title => l(:button_delete))
       end
       content << content_tag('li', s)
     end
