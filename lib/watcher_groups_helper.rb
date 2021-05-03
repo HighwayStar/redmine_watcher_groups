@@ -18,11 +18,12 @@ module WatcherGroupsHelper
   end
 
   def groups_for_new_issue_watchers(issue)
-    users = issue.watcher_groups.select{|u| u.status == User::STATUS_ACTIVE}
+    watcher_groups = issue.watcher_groups.select{|u| u.status == User::STATUS_ACTIVE}
+    groups = Group.active.joins(:members).where("#{Member.table_name}.project_id = ?", @project.id).distinct.sort
     if issue.project.users.count <= 20
-      users = (users + issue.project.users.sort).uniq
+      watcher_groups = (watcher_groups + groups).uniq
     end
-    users
+    watcher_groups
   end
 
   # Returns a comma separated list of users watching the given object

@@ -4,6 +4,8 @@
 #watcher_groups img.gravatar {margin: 0 4px 2px 0;}
 
 span#watcher_groups_inputs {overflow:auto; display:block;}
+#watcher_groups_form_container label { white-space: nowrap; }
+
 span.search_for_watcher_groups {display:block;}
 span.search_for_watcher_groups, span.add_attachment {font-size:80%; line-height:2.5em;}
 span.search_for_watcher_groups a, span.add_attachment a {padding-left:16px; background: url(../../../images/bullet_add.png) no-repeat 0 50%; } 
