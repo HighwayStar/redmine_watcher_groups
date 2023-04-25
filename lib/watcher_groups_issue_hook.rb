@@ -1,5 +1,5 @@
 #encoding: utf-8
-module WatcherGroupsIssueHooks
+module WatcherGroupsIssueHook
   class WatcherGroupsIssueAfterSaveHooks < Redmine::Hook::ViewListener
     # Context:
     # * :issue => Issue being saved
@@ -30,4 +30,8 @@ module WatcherGroupsIssueHooks
 
     end
   end
+end
+
+unless Issue.included_modules.include?(WatcherGroupsIssuePatch)
+  Issue.send(:include, WatcherGroupsIssuePatch)
 end

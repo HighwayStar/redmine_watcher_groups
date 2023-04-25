@@ -62,3 +62,8 @@ module WatcherGroupsHelper
     end.join.html_safe
   end
 end
+
+
+unless WatcherGroupsHelper.included_modules.include?(WatchersHelper)
+  WatcherGroupsHelper.send(:include, WatchersHelper)
+end

@@ -1,4 +1,4 @@
-require_dependency 'watcher_groups_helper' 
+#require_dependency 'watcher_groups_helper' 
 
 module WatcherGroupsIssuesControllerPatch
 
@@ -11,4 +11,6 @@ module WatcherGroupsIssuesControllerPatch
 
 end
 
-
+unless IssuesController.included_modules.include?(WatcherGroupsIssuesControllerPatch)
+  IssuesController.send(:include, WatcherGroupsIssuesControllerPatch)
+end

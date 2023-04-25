@@ -23,3 +23,7 @@ module WatchersListOverride
 		super(object) + (content.present? ? content_tag('ul', content, :class => 'watchers') : content) + '<script type="text/javascript">(function (h3) { h3.text(h3.text().replace(/\(\d+\)/, function (m) { return "(" + $("#watchers li").length + ")" })) }) ($("#watchers h3"))</script>'.html_safe
 	end
 end
+
+unless WatchersHelper.included_modules.include?(WatchersListOverride)
+    WatchersHelper.send(:prepend, WatchersListOverride)
+end
